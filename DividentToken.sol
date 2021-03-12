@@ -37,10 +37,11 @@ contract DividendToken is StandardToken, Ownable {
         }));
     }
 
-    function() external payable {
+    function sendDeposit(bytes32 _data) external payable {
         if (msg.value > 0) {
             emit Deposit(msg.sender, msg.value);
             m_totalDividends = m_totalDividends.add(msg.value);
+            m_depositComment[msg.sender].push(_data);
         }
     }
 
@@ -57,8 +58,7 @@ contract DividendToken is StandardToken, Ownable {
     }
 
     /// @notice hook on standard ERC20#transfer to pay dividends
-    function transfer(address _to, uint256 _value, bytes32 _data) public returns (bool) {
-        m_transferData[_to].push(_data);
+    function transfer(address _to, uint256 _value) public returns (bool) {
         payDividendsTo(msg.sender);
         payDividendsTo(_to);
         return super.transfer(_to, _value);
@@ -164,8 +164,8 @@ contract DividendToken is StandardToken, Ownable {
         return 1000;
     }
 
-    /// @notice record transactions data
-    mapping(address => bytes32[]) public m_accountTransferData;
+    /// @notice keeps a comment of the deposit
+    mapping(address => bytes32[]) public m_depositComment;
 
     /// @notice record of issued dividend emissions
     EmissionInfo[] public m_emissions;

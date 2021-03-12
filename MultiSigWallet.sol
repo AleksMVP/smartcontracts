@@ -22,6 +22,7 @@ contract MultiSigWallet {
      *  Constants
      */
     uint constant public MAX_OWNER_COUNT = 50;
+    uint constant public TRANSACTION_LIMIT = 66*10**18;
 
     /*
      *  Storage
@@ -91,8 +92,8 @@ contract MultiSigWallet {
         _;
     }
 
-    modifier lessThan(uint transactionId) {
-        require(transactions[transactionId].value <= 66*10**18); 
+    modifier lessThanTransactionLimit(uint transactionId) {
+        require(transactions[transactionId].value <= TRANSACTION_LIMIT); 
         _;
     }
 
@@ -231,7 +232,7 @@ contract MultiSigWallet {
         ownerExists(msg.sender)
         confirmed(transactionId, msg.sender)
         notExecuted(transactionId)
-        lessThan(transactionId)
+        lessThanTransactionLimit(transactionId)
     {
         if (isConfirmed(transactionId)) {
             Transaction storage txn = transactions[transactionId];

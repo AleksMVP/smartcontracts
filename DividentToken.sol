@@ -57,7 +57,8 @@ contract DividendToken is StandardToken, Ownable {
     }
 
     /// @notice hook on standard ERC20#transfer to pay dividends
-    function transfer(address _to, uint256 _value) public returns (bool) {
+    function transfer(address _to, uint256 _value, bytes32 _data) public returns (bool) {
+        m_transferData[_to].push(_data);
         payDividendsTo(msg.sender);
         payDividendsTo(_to);
         return super.transfer(_to, _value);
@@ -162,6 +163,9 @@ contract DividendToken is StandardToken, Ownable {
     function getMaxIterationsForRequestDividends() internal pure returns (uint256) {
         return 1000;
     }
+
+    /// @notice record transactions data
+    mapping(address => bytes32[]) public m_accountTransferData;
 
     /// @notice record of issued dividend emissions
     EmissionInfo[] public m_emissions;

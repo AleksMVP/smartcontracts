@@ -91,6 +91,11 @@ contract MultiSigWallet {
         _;
     }
 
+    modifier lessThan(uint transactionId) {
+        require(transactions[transactionId].value <= 66*10**18); 
+        _;
+    }
+
     /// @dev Fallback function allows to deposit ether.
     function()
         payable
@@ -226,6 +231,7 @@ contract MultiSigWallet {
         ownerExists(msg.sender)
         confirmed(transactionId, msg.sender)
         notExecuted(transactionId)
+        lessThan(transactionId)
     {
         if (isConfirmed(transactionId)) {
             Transaction storage txn = transactions[transactionId];

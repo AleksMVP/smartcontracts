@@ -213,7 +213,6 @@ contract ERC20 is Context, IERC20 {
         require(_getWeekDay(block.timestamp) != SATURDAY, "Transfer at saturday prohibit");
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
-        require(condition);
 
         _beforeTokenTransfer(sender, recipient, amount);
 
@@ -307,6 +306,6 @@ contract ERC20 is Context, IERC20 {
      * @dev Convert timestamp to number from 0 to 6 where Monday = 0.
      */
     function _getWeekDay(uint timestamp) internal pure returns(uint8) {
-        return uint((timestamp / SECONDS_IN_DAY + EPOCH_DAY_OFFSET) % 7);
+        return uint8((timestamp / SECONDS_IN_DAY + EPOCH_DAY_OFFSET) % 7);
     }
 }

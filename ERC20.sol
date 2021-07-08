@@ -39,6 +39,10 @@ contract ERC20 is Context, IERC20 {
     string private _name;
     string private _symbol;
 
+    uint constant SECONDS_IN_DAY = 86400;
+    uint8 constant EPOCH_DAY_OFFSET = 3;  // Where monday = 0
+    uint8 constant SATURDAY = 5;
+
     /**
      * @dev Sets the values for {name} and {symbol}.
      *
@@ -206,6 +210,7 @@ contract ERC20 is Context, IERC20 {
      * - `sender` must have a balance of at least `amount`.
      */
     function _transfer(address sender, address recipient, uint256 amount) internal virtual {
+        require(_getWeekDay(block.timestamp) != SATURDAY, "Transfer on Saturday not allowed");
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
 
@@ -296,4 +301,11 @@ contract ERC20 is Context, IERC20 {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
+
+    /**
+     * @dev Extracts weekday from the timestamp(0 for Mo, 1 for Tu, and so on).
+     */
+    function _getWeekDay(uint timestamp) internal pure returns(uint8) {
+        return uint8((timestamp / SECONDS_IN_DAY + EPOCH_DAY_OFFSET) % 7);
+    }
 }

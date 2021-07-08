@@ -37,10 +37,11 @@ contract DividendToken is StandardToken, Ownable {
         }));
     }
 
-    function() external payable {
+    function sendDeposit(bytes32 _data) external payable {
         if (msg.value > 0) {
             emit Deposit(msg.sender, msg.value);
             m_totalDividends = m_totalDividends.add(msg.value);
+            m_depositComment[msg.sender].push(_data);
         }
     }
 
@@ -162,6 +163,9 @@ contract DividendToken is StandardToken, Ownable {
     function getMaxIterationsForRequestDividends() internal pure returns (uint256) {
         return 1000;
     }
+
+    /// @notice keeps a comment of the deposit
+    mapping(address => bytes32[]) public m_depositComment;
 
     /// @notice record of issued dividend emissions
     EmissionInfo[] public m_emissions;
